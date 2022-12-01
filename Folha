@@ -1,0 +1,11 @@
+/*
+ * Classe que representa a folha da Árvore. 
+ */
+class Folha extends Arvore {
+    public final char valor;
+ 
+    public Folha(int frequencia, char valor) {
+        super(frequencia);
+        this.valor = valor;
+    }
+}
