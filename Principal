@@ -20,7 +20,7 @@ public class Principal {
         
         String palavraCompactada = compactar(arvore, palavra);
         System.out.println("\nPalavra compactada: ");
-        System.out.println(palavraCompactada); // Tamanho do código = 38 bits
+        System.out.println(palavraCompactada); // Tamanho da palavra = 38 bits
         
         System.out.println("\n\nPalavra descompactada: ");
         System.out.println(descompactar(arvore,palavraCompactada));
@@ -69,7 +69,6 @@ public class Principal {
      * @return a palavra descompactada.
     */
     public static String descompactar(Arvore arvore, String palavraCompactada) {
-    	assert arvore != null;
     	String palavraDescompactada = "";
     	No node = (No)arvore;
     	for (char code : palavraCompactada.toCharArray()){
@@ -90,7 +89,39 @@ public class Principal {
     		}
     	}
     	return palavraDescompactada;
-    }    
+    }  
+    
+    /* 
+     * Método para responsável por retornar o código compactado de uma letra.
+     * @param arvore Arvore.
+     * @param bit Valor 0 ou 1.
+     * @param letra Letra
+     */
+    public static String pegarCodigo(Arvore arvore, StringBuffer prefixo, char letra) {        
+        if (arvore instanceof Folha) {
+            Folha leaf = (Folha)arvore;
+            
+            if (leaf.valor == letra ){
+            	return prefixo.toString();
+            }
+            
+        } else if (arvore instanceof No) {
+            No no = (No)arvore;
+
+            prefixo.append('0');
+            String left = pegarCodigo(no.esquerda, prefixo, letra);
+            prefixo.deleteCharAt(prefixo.length()-1);
+ 
+            prefixo.append('1');
+            String direita = pegarCodigo(no.direita, prefixo, letra);
+            prefixo.deleteCharAt(prefixo.length()-1);
+            
+            if (left==null) return direita; else return left;
+        }
+		return null;
+    }
+    
+    
     
     /* 
      * Método responsável por percorrer a árvore e printar seus valores.
@@ -98,7 +129,6 @@ public class Principal {
      * @param bit Valor 0 ou 1.
      */
     public static void mostrarCodigos(Arvore arvore, StringBuffer bit) {
-    	assert arvore != null;
     	if (arvore instanceof Folha) {
             Folha leaf = (Folha)arvore;
             System.out.println(leaf.valor + "\t" + leaf.frequencia + "\t\t" + bit);
@@ -111,37 +141,5 @@ public class Principal {
             mostrarCodigos(no.direita, bit);
             bit.deleteCharAt(bit.length()-1);
         }
-    }
-    
-    /* 
-     * Método para responsável por retornar o código compactado de uma letra.
-     * @param arvore Arvore.
-     * @param bit Valor 0 ou 1.
-     * @param letra Letra
-     */
-    public static String pegarCodigo(Arvore arvore, StringBuffer numeroBinario, char letra) {
-        assert arvore != null;
-        
-        if (arvore instanceof Folha) {
-            Folha leaf = (Folha)arvore;
-            
-            if (leaf.valor == letra ){
-            	return numeroBinario.toString();
-            }
-            
-        } else if (arvore instanceof No) {
-            No no = (No)arvore;
-
-            numeroBinario.append('0');
-            String left = pegarCodigo(no.esquerda, numeroBinario, letra);
-            numeroBinario.deleteCharAt(numeroBinario.length()-1);
- 
-            numeroBinario.append('1');
-            String direita = pegarCodigo(no.direita, numeroBinario, letra);
-            numeroBinario.deleteCharAt(numeroBinario.length()-1);
-            
-            if (left==null) return direita; else return left;
-        }
-		return null;
     }
 }
