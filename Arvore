@@ -1,11 +1,14 @@
 /*
- * Classe que representa a folha da Árvore. 
+ * Classe abstrata que representa a Árvore.
  */
-class Folha extends Arvore {
-    public final char valor;
- 
-    public Folha(int frequencia, char valor) {
-        super(frequencia);
-        this.valor = valor;
+abstract class Arvore implements Comparable<Arvore> {
+    public final int frequencia; 
+  
+    public Arvore(int freq) { 
+    	frequencia = freq; 
+    }
+    
+    public int compareTo(Arvore tree) {
+        return frequencia - tree.frequencia;
     }
 }
