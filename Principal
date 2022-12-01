@@ -1,0 +1,147 @@
+import java.util.*;
+
+/*
+ * Classe responsável por fazer a Codificação de Huffman.
+ */
+public class Principal {
+	
+	public static void main(String[] args) {
+        String palavra = "paralelogramo"; // Tamanho da palavra = 104 bits 
+        
+        int[] frequenciaLetras = new int[128];
+        for (char c : palavra.toCharArray())
+            frequenciaLetras[c]++;
+        
+        Arvore arvore = criarArvore(frequenciaLetras);
+        
+        System.out.println("Resultado:");
+        System.out.println("Letra\tFrequência\tCódigo");
+        mostrarCodigos(arvore, new StringBuffer());
+        
+        String palavraCompactada = compactar(arvore, palavra);
+        System.out.println("\nPalavra compactada: ");
+        System.out.println(palavraCompactada); // Tamanho do código = 38 bits
+        
+        System.out.println("\n\nPalavra descompactada: ");
+        System.out.println(descompactar(arvore,palavraCompactada));
+
+    }
+
+	/* 
+	 * Método responsável por criar a árvore.
+	 * @param frequenciaLetras Arrays com as frequencias das letras.
+	 * @return arvores Arvore. 
+	 */
+    public static Arvore criarArvore(int[] frequenciaLetras) {
+        PriorityQueue<Arvore> arvores = new PriorityQueue<Arvore>();
+        
+        for (int i = 0; i < frequenciaLetras.length; i++){
+            if (frequenciaLetras[i] > 0)
+                arvores.offer(new Folha(frequenciaLetras[i], (char)i));
+        }
+        
+        while (arvores.size() > 1) {
+            Arvore a = arvores.poll(); 
+            Arvore b = arvores.poll();
+            arvores.offer(new No(a, b)); 
+        }
+        return arvores.poll();
+    }
+ 
+    /* 
+	 * Método responsável por compactar a palavra.
+	 * @param arvore Arvore.
+	 * @param palavraCompactada Palavra que sera compactada.
+	 * @return o código referente a palavra compactada. 
+	 */
+    public static String compactar(Arvore arvore, String palavraCompactada){
+    	String codigos = "";
+        for (char c : palavraCompactada.toCharArray()){
+        	codigos+=(pegarCodigo(arvore, new StringBuffer(),c));
+        }
+    	return codigos;
+    }
+    
+    /* 
+     * Método responsável por descompactar a palavra.
+     * @param arvore Arvore.
+     * @param palavraCompactada Palavra que sera descompactada.
+     * @return a palavra descompactada.
+    */
+    public static String descompactar(Arvore arvore, String palavraCompactada) {
+    	assert arvore != null;
+    	String palavraDescompactada = "";
+    	No node = (No)arvore;
+    	for (char code : palavraCompactada.toCharArray()){
+    		if (code == '0'){ 
+    		    if (node.esquerda instanceof Folha) { 
+    		    	palavraDescompactada += ((Folha)node.esquerda).valor;   
+	                node = (No)arvore;
+	    		}else{
+	    			node = (No) node.esquerda; 
+	    		}
+    		}else if (code == '1'){ 
+    		    if (node.direita instanceof Folha) {
+    		    	palavraDescompactada += ((Folha)node.direita).valor; 
+	                node = (No)arvore; 
+	    		}else{
+	    			node = (No) node.direita; 
+	    		}
+    		}
+    	}
+    	return palavraDescompactada;
+    }    
+    
+    /* 
+     * Método responsável por percorrer a árvore e printar seus valores.
+     * @param arvore Arvore.
+     * @param bit Valor 0 ou 1.
+     */
+    public static void mostrarCodigos(Arvore arvore, StringBuffer bit) {
+    	assert arvore != null;
+    	if (arvore instanceof Folha) {
+            Folha leaf = (Folha)arvore;
+            System.out.println(leaf.valor + "\t" + leaf.frequencia + "\t\t" + bit);
+        } else if (arvore instanceof No) {
+            No no = (No)arvore;
+            bit.append('0');
+            mostrarCodigos(no.esquerda, bit);
+            bit.deleteCharAt(bit.length()-1);
+            bit.append('1');
+            mostrarCodigos(no.direita, bit);
+            bit.deleteCharAt(bit.length()-1);
+        }
+    }
+    
+    /* 
+     * Método para responsável por retornar o código compactado de uma letra.
+     * @param arvore Arvore.
+     * @param bit Valor 0 ou 1.
+     * @param letra Letra
+     */
+    public static String pegarCodigo(Arvore arvore, StringBuffer numeroBinario, char letra) {
+        assert arvore != null;
+        
+        if (arvore instanceof Folha) {
+            Folha leaf = (Folha)arvore;
+            
+            if (leaf.valor == letra ){
+            	return numeroBinario.toString();
+            }
+            
+        } else if (arvore instanceof No) {
+            No no = (No)arvore;
+
+            numeroBinario.append('0');
+            String left = pegarCodigo(no.esquerda, numeroBinario, letra);
+            numeroBinario.deleteCharAt(numeroBinario.length()-1);
+ 
+            numeroBinario.append('1');
+            String direita = pegarCodigo(no.direita, numeroBinario, letra);
+            numeroBinario.deleteCharAt(numeroBinario.length()-1);
+            
+            if (left==null) return direita; else return left;
+        }
+		return null;
+    }
+}
