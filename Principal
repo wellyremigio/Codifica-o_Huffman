@@ -6,7 +6,7 @@ import java.util.*;
 public class Principal {
 	
 	public static void main(String[] args) {
-        String palavra = "paralelogramo"; // Tamanho da palavra = 104 bits 
+        String palavra = "o bum da bomba"; // Tamanho da palavra = 104 bits 
         
         int[] frequenciaLetras = new int[128];
         for (char c : palavra.toCharArray())
@@ -24,7 +24,6 @@ public class Principal {
         
         System.out.println("\n\nPalavra descompactada: ");
         System.out.println(descompactar(arvore,palavraCompactada));
-
     }
 
 	/* 
@@ -89,7 +88,7 @@ public class Principal {
     		}
     	}
     	return palavraDescompactada;
-    }  
+    }
     
     /* 
      * Método para responsável por retornar o código compactado de uma letra.
@@ -120,8 +119,6 @@ public class Principal {
         }
 		return null;
     }
-    
-    
     
     /* 
      * Método responsável por percorrer a árvore e printar seus valores.
